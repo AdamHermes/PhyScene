@@ -1,7 +1,7 @@
 import torch
 import numpy as np
-from .box_intersection_2d import oriented_box_intersection_2d
-from .min_enclosing_box import smallest_bounding_box
+from box_intersection_2d import oriented_box_intersection_2d
+from min_enclosing_box import smallest_bounding_box
 
 def box2corners_th(box:torch.Tensor)-> torch.Tensor:
     """convert box coordinate to corners
@@ -53,12 +53,7 @@ def cal_iou(box1:torch.Tensor, box2:torch.Tensor):
     area1 = box1[:, :, 2] * box1[:, :, 3]
     area2 = box2[:, :, 2] * box2[:, :, 3]
     u = area1 + area2 - inter_area
-    # if u>0:
-    #     eps = 1e-9
-    # else:
-    #     eps = 0
-    eps = 1e-9
-    iou = inter_area / (u + eps)
+    iou = inter_area / u
     return iou, corners1, corners2, u
 
 def cal_diou(box1:torch.Tensor, box2:torch.Tensor, enclosing_type:str="smallest"):
@@ -102,14 +97,12 @@ def cal_iou_3d(box3d1:torch.Tensor, box3d2:torch.Tensor, verbose=False):
     intersection_3d = iou_2d * u * z_overlap
     v1 = box3d1[..., 3] * box3d1[..., 4] * box3d1[..., 5]
     v2 = box3d2[..., 3] * box3d2[..., 4] * box3d2[..., 5]
-    intersection_3d = intersection_3d*(v1>0)*(v2>0)
     u3d = v1 + v2 - intersection_3d
-    eps = 1e-9
     if verbose:
         z_range = (torch.max(zmax1, zmax2) - torch.min(zmin1, zmin2)).clamp_min(0.)
-        return intersection_3d / (u3d+eps), corners1, corners2, z_range, u3d
+        return intersection_3d / u3d, corners1, corners2, z_range, u3d
     else:
-        return intersection_3d / (u3d+eps)
+        return intersection_3d / u3d
 
 def cal_giou_3d(box3d1:torch.Tensor, box3d2:torch.Tensor, enclosing_type:str="smallest"):
     """calculated 3d GIoU loss. assume the 3d bounding boxes are only rotated around z axis

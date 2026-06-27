@@ -1,15 +1,37 @@
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh  
 
+source ~/.bashrc
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
 #### Create a Conda Environment
 ```
-conda create --name physcene python=3.8.16
+conda create -n physcene python=3.10 -y
 conda activate physcene
 ```
 #### Install Python Packages
 ```
-conda install pytorch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 pytorch-cuda=11.7 -c pytorch -c nvidia
+#conda install pytorch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 pytorch-cuda=11.7 -c pytorch -c nvidia
 pip install -r requirements.txt
 ```
+pip install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1
 
+pip install \
+numpy networkx pyrr pyyaml pillow scipy tqdm \
+trimesh==3.21.7 matplotlib simple-3dviz==0.7.0 \
+num2words nltk transformers==4.25.1 \
+clip==0.2.0 seaborn wandb hydra-core tensorboard \
+omegaconf loguru open3d==0.17.0 \
+opencv-python==4.8.0.74 tabulate==0.9.0 \
+einops smplx
+
+pip install kaolin==0.18.0 -f https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-2.4.1_cu121.html
+
+
+python scripts/eval/evaluate_echoscene_collision.py \
+    --object-mesh-root "/content/drive/MyDrive/EchoScene/col5/2050/echoscene/object_meshes" \
+    --scene-json "/content/drive/MyDrive/EchoScene/col5/2050/merged.json" \
+    --transform-source json
 #### Compile Rotated_IoU Extension:   
 ```
 # code is from https://github.com/lilanxiao/Rotated_IoU

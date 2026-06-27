@@ -10,7 +10,7 @@ envs/assets/scene_description/
 envs/assets/movable_hand_urdf/
 visual/
 visual_ablation/
-
+collision/
 *.swp
 *.png
 *.so

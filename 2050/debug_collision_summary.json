@@ -1,0 +1,49 @@
+{
+  "method": "bbox_no_direction",
+  "backend": "auto",
+  "object_mesh_root": "2050\\echoscene\\object_meshes",
+  "scene_count": 1,
+  "object_count": 7,
+  "collided_object_count": 5,
+  "collided_scene_count": 1,
+  "ColObj": 0.7142857142857143,
+  "ColScene": 1.0,
+  "per_scene": [
+    {
+      "scene_id": "MasterBedroom-33296",
+      "object_count": 7,
+      "collided_object_count": 5,
+      "has_collision": true,
+      "objects": [
+        {
+          "path": "2050\\echoscene\\object_meshes\\MasterBedroom-33296\\bed_1_4.obj",
+          "collides": true
+        },
+        {
+          "path": "2050\\echoscene\\object_meshes\\MasterBedroom-33296\\cabinet_3_5.obj",
+          "collides": false
+        },
+        {
+          "path": "2050\\echoscene\\object_meshes\\MasterBedroom-33296\\chair_4_3.obj",
+          "collides": true
+        },
+        {
+          "path": "2050\\echoscene\\object_meshes\\MasterBedroom-33296\\lamp_7_6.obj",
+          "collides": false
+        },
+        {
+          "path": "2050\\echoscene\\object_meshes\\MasterBedroom-33296\\nightstand_8_2.obj",
+          "collides": true
+        },
+        {
+          "path": "2050\\echoscene\\object_meshes\\MasterBedroom-33296\\table_11_1.obj",
+          "collides": true
+        },
+        {
+          "path": "2050\\echoscene\\object_meshes\\MasterBedroom-33296\\wardrobe_13_7.obj",
+          "collides": true
+        }
+      ]
+    }
+  ]
+}

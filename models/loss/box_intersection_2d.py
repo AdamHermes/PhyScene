@@ -5,7 +5,7 @@ author: lanxiao li
 2020.8
 '''
 import torch
-from .cuda_op.cuda_ext import sort_v
+from cuda_op.cuda_ext import sort_v
 EPSILON = 1e-8
 
 def box_intersection_th(corners1:torch.Tensor, corners2:torch.Tensor):

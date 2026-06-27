@@ -1,0 +1,169 @@
+scene 1/55: Bedroom-12864
+[0, 1, 1, 1, 0]
+  collided objects: 3/5
+scene 2/55: Bedroom-18
+[1, 1, 1, 0]
+  collided objects: 3/4
+scene 3/55: Bedroom-18055
+[1, 0, 0, 1, 0, 0]
+  collided objects: 2/6
+scene 4/55: Bedroom-2719
+[1, 1, 1, 1, 0, 0]
+  collided objects: 4/6
+scene 5/55: Bedroom-4098
+[0, 0, 0, 0, 0]
+  collided objects: 0/5
+scene 6/55: Bedroom-430
+[1, 1, 1, 0]
+  collided objects: 3/4
+scene 7/55: Bedroom-47437
+[0, 0, 0]
+  collided objects: 0/3
+scene 8/55: Bedroom-47481
+[1, 1, 0, 1, 0]
+  collided objects: 3/5
+scene 9/55: Bedroom-5265
+[1, 1, 0, 1, 1, 0, 0]
+  collided objects: 4/7
+scene 10/55: Bedroom-68718
+[1, 1, 1, 0, 0]
+  collided objects: 3/5
+scene 11/55: Bedroom-6993
+[0, 0, 0]
+  collided objects: 0/3
+scene 12/55: Bedroom-87322
+[1, 1, 1, 0, 0, 0, 0]
+  collided objects: 3/7
+scene 13/55: MasterBedroom-10364
+[1, 1, 1, 0, 0, 0]
+  collided objects: 3/6
+scene 14/55: MasterBedroom-104323
+[1, 0, 1]
+  collided objects: 2/3
+scene 15/55: MasterBedroom-118594
+[0, 0, 0, 0]
+  collided objects: 0/4
+scene 16/55: MasterBedroom-12352
+[1, 1, 0, 0]
+  collided objects: 2/4
+scene 17/55: MasterBedroom-13100
+[0, 1, 1, 1, 1, 0]
+  collided objects: 4/6
+scene 18/55: MasterBedroom-132469
+[0, 0, 0]
+  collided objects: 0/3
+scene 19/55: MasterBedroom-1362
+[0, 1, 0, 1, 0, 0]
+  collided objects: 2/6
+scene 20/55: MasterBedroom-18415
+[1, 1, 0, 0, 0, 0]
+  collided objects: 2/6
+scene 21/55: MasterBedroom-196
+[0, 0, 1, 1, 1]
+  collided objects: 3/5
+scene 22/55: MasterBedroom-21684
+[0, 0, 0, 1, 1, 0, 0]
+  collided objects: 2/7
+scene 23/55: MasterBedroom-22121
+[1, 1, 1, 0, 0, 0, 0]
+  collided objects: 3/7
+scene 24/55: MasterBedroom-27127
+[1, 1, 1, 1, 0]
+  collided objects: 4/5
+scene 25/55: MasterBedroom-33296
+[1, 1, 1, 1, 0, 0, 0]
+  collided objects: 4/7
+scene 26/55: MasterBedroom-4089
+[0, 1, 0, 1, 0]
+  collided objects: 2/5
+scene 27/55: MasterBedroom-514
+[1, 1, 0]
+  collided objects: 2/3
+scene 28/55: MasterBedroom-6351
+[1, 1, 0, 0]
+  collided objects: 2/4
+scene 29/55: MasterBedroom-6399
+[0, 0, 0, 0, 0]
+  collided objects: 0/5
+scene 30/55: MasterBedroom-75552
+[0, 0, 0]
+  collided objects: 0/3
+scene 31/55: MasterBedroom-7894
+[0, 0, 0, 0]
+  collided objects: 0/4
+scene 32/55: MasterBedroom-935
+[1, 0, 0, 0, 0, 0, 1, 0, 0]
+  collided objects: 2/9
+scene 33/55: MasterBedroom-9404
+[1, 1, 1, 1, 1, 0]
+  collided objects: 5/6
+scene 34/55: SecondBedroom-11167
+[0, 0, 0, 0, 0, 0, 0]
+  collided objects: 0/7
+scene 35/55: SecondBedroom-11204
+[0, 0, 0, 1, 1]
+  collided objects: 2/5
+scene 36/55: SecondBedroom-11303
+[1, 1, 0, 1, 1]
+  collided objects: 4/5
+scene 37/55: SecondBedroom-1145
+[1, 1, 0, 0]
+  collided objects: 2/4
+scene 38/55: SecondBedroom-13841
+[0, 1, 1]
+  collided objects: 2/3
+scene 39/55: SecondBedroom-15551
+[0, 0, 0]
+  collided objects: 0/3
+scene 40/55: SecondBedroom-19119
+[1, 0, 1, 0, 0]
+  collided objects: 2/5
+scene 41/55: SecondBedroom-19262
+[0, 0, 0, 0]
+  collided objects: 0/4
+scene 42/55: SecondBedroom-22370
+[0, 1, 0, 1, 0]
+  collided objects: 2/5
+scene 43/55: SecondBedroom-2311
+[0, 0, 0, 0]
+  collided objects: 0/4
+scene 44/55: SecondBedroom-266050
+[1, 1, 0, 1]
+  collided objects: 3/4
+scene 45/55: SecondBedroom-2787
+[1, 1, 0, 0]
+  collided objects: 2/4
+scene 46/55: SecondBedroom-30034
+[1, 1, 0, 0]
+  collided objects: 2/4
+scene 47/55: SecondBedroom-34317
+[1, 0, 1, 1, 0]
+  collided objects: 3/5
+scene 48/55: SecondBedroom-35821
+[1, 0, 1, 0, 0, 1]
+  collided objects: 3/6
+scene 49/55: SecondBedroom-52584
+[0, 0, 0]
+  collided objects: 0/3
+scene 50/55: SecondBedroom-6482
+[1, 1, 1, 1, 0, 0]
+  collided objects: 4/6
+scene 51/55: SecondBedroom-69136
+[1, 0, 1, 1, 0, 0]
+  collided objects: 3/6
+scene 52/55: SecondBedroom-69556
+[1, 0, 0, 0, 0, 1]
+  collided objects: 2/6
+scene 53/55: SecondBedroom-739
+[1, 1, 1, 0]
+  collided objects: 3/4
+scene 54/55: SecondBedroom-8497
+[1, 1, 0, 0]
+  collided objects: 2/4
+scene 55/55: SecondBedroom-860
+[1, 1, 1, 0, 0]
+  collided objects: 3/5
+overlap object:  0.42962962962962964 cnt  116 / 270
+overlap scene rate:  0.7636363636363637
+ColObj: 0.42962962962962964
+ColScene: 0.7636363636363637
