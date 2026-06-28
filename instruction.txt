@@ -23,6 +23,12 @@ pip install kaolin==0.18.0 -f https://nvidia-kaolin.s3.us-east-2.amazonaws.com/t
 
 # Chạy để được Colobj and ColScene
 python scripts/eval/evaluate_echoscene_collision.py \
-    --object-mesh-root "/content/drive/MyDrive/EchoScene/col5/2050/echoscene/object_meshes" \
-    --scene-json "/content/drive/MyDrive/EchoScene/col5/2050/physcene.json" \
-    --transform-source json
+  --object-mesh-root "/content/drive/MyDrive/EchoScene/286/2050/echoscene/object_meshes" \
+  --scene-json "/content/drive/MyDrive/EchoScene/286/2050/physcene_collision_input.json" \
+  --transform-source json \
+  --size-scale 1.0 \
+  --method mesh \
+  --backend kaolin \
+  --device cuda \
+  --debug-sanity \
+  --summary-json /content/drive/MyDrive/EchoScene/286/2050/echoscene_collision_summary.json
