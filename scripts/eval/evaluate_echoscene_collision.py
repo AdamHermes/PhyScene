@@ -177,17 +177,25 @@ def find_scene_dirs(root: Path, requested_scene_ids: Iterable[str] | None) -> li
     if not root.exists():
         raise FileNotFoundError(f"Object mesh root does not exist: {root}")
 
-    if requested_scene_ids is not None:
-        scene_dirs = [root / scene_id for scene_id in requested_scene_ids]
-    else:
-        scene_dirs = [p for p in root.iterdir() if p.is_dir()]
+    if requested_scene_ids is None:
+        return sorted([p for p in root.iterdir() if p.is_dir()])
 
-    missing = [p for p in scene_dirs if not p.exists()]
+    existing = []
+    missing = []
+
+    for sid in requested_scene_ids:
+        scene_dir = root / sid
+        if scene_dir.exists():
+            existing.append(scene_dir)
+        else:
+            missing.append(scene_dir)
+
     if missing:
-        missing_text = "\n".join(str(p) for p in missing[:10])
-        raise FileNotFoundError(f"Missing scene mesh directories:\n{missing_text}")
+        missing_text = "\n".join(str(p) for p in missing)
+        print(f"[warning] Missing scene mesh directories:\n{missing_text}")
+        print(f"[warning] Skipping {len(missing)} missing scenes.")
 
-    return sorted(scene_dirs)
+    return existing
 
 
 class ObjMesh:
@@ -605,9 +613,11 @@ def main() -> None:
     if not scene_dirs:
         raise ValueError(f"No scenes found under {root}")
 
-    collided_objects = 0
-    total_objects = 0
-    collided_scenes = 0
+    categories = ["all", "bedroom", "livingroom", "diningroom", "library"]
+    collided_objects = {cat: 0 for cat in categories}
+    total_objects = {cat: 0 for cat in categories}
+    collided_scenes = {cat: 0 for cat in categories}
+    total_scenes = {cat: 0 for cat in categories}
     per_scene = []
 
     for scene_idx, scene_dir in enumerate(scene_dirs, start=1):
@@ -629,9 +639,22 @@ def main() -> None:
         scene_total_objects = len(meshes)
         scene_has_collision = scene_collided_objects > 0
 
-        collided_objects += scene_collided_objects
-        total_objects += scene_total_objects
-        collided_scenes += int(scene_has_collision)
+        scene_name = scene_dir.name.lower()
+        cats_for_scene = ["all"]
+        if "bedroom" in scene_name:
+            cats_for_scene.append("bedroom")
+        if "livingroom" in scene_name or "livingdiningroom" in scene_name:
+            cats_for_scene.append("livingroom")
+        if "diningroom" in scene_name:
+            cats_for_scene.append("diningroom")
+        if "library" in scene_name:
+            cats_for_scene.append("library")
+
+        for cat in cats_for_scene:
+            collided_objects[cat] += scene_collided_objects
+            total_objects[cat] += scene_total_objects
+            collided_scenes[cat] += int(scene_has_collision)
+            total_scenes[cat] += 1
 
         print(f"scene {scene_idx}/{len(scene_dirs)}: {scene_dir.name}")
         print(flags.astype(int).tolist())
@@ -643,6 +666,7 @@ def main() -> None:
         per_scene.append(
             {
                 "scene_id": scene_dir.name,
+                "categories": cats_for_scene,
                 "object_count": scene_total_objects,
                 "collided_object_count": scene_collided_objects,
                 "has_collision": scene_has_collision,
@@ -658,13 +682,24 @@ def main() -> None:
             }
         )
 
-    col_obj = collided_objects / total_objects
-    col_scene = collided_scenes / len(scene_dirs)
-
-    print("overlap object: ", col_obj, "cnt ", collided_objects, "/", total_objects)
-    print("overlap scene rate: ", col_scene)
-    print("ColObj:", col_obj)
-    print("ColScene:", col_scene)
+    col_obj = {}
+    col_scene = {}
+    
+    for cat in categories:
+        if total_objects[cat] > 0:
+            col_obj[cat] = collided_objects[cat] / total_objects[cat]
+        else:
+            col_obj[cat] = 0.0
+            
+        if total_scenes[cat] > 0:
+            col_scene[cat] = collided_scenes[cat] / total_scenes[cat]
+        else:
+            col_scene[cat] = 0.0
+            
+        print(f"[{cat}] overlap object: {col_obj[cat]:.4f} cnt {collided_objects[cat]}/{total_objects[cat]}")
+        print(f"[{cat}] overlap scene rate: {col_scene[cat]:.4f}")
+        print(f"[{cat}] ColObj: {col_obj[cat]:.4f}")
+        print(f"[{cat}] ColScene: {col_scene[cat]:.4f}")
 
     if args.summary_json is not None:
         summary_path = Path(args.summary_json)
@@ -677,7 +712,7 @@ def main() -> None:
                     "transform_source": args.transform_source,
                     "size_scale": args.size_scale,
                     "object_mesh_root": str(root),
-                    "scene_count": len(scene_dirs),
+                    "scene_count": total_scenes,
                     "object_count": total_objects,
                     "collided_object_count": collided_objects,
                     "collided_scene_count": collided_scenes,

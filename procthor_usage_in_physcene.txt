@@ -1,0 +1,26 @@
+# ProcTHOR Usage in PhyScene
+
+## What is ProcTHOR?
+ProcTHOR (Procedural THOR) is an open-source framework and dataset created by the Allen Institute for AI (AI2) that procedurally generates vast, diverse, and interactive 3D home environments. It provides tens of thousands of unique floor plans and room layouts designed to help train and test Embodied AI models in unseen environments.
+
+## How is ProcTHOR used in PhyScene?
+In the PhyScene repository, ProcTHOR is utilized as a massive source of **diverse, unseen floor plans** to test the model's scene generation capabilities. Rather than training on ProcTHOR, PhyScene uses its empty room layouts to evaluate how well the model can automatically generate and populate completely arbitrary and novel room shapes with 3D furniture.
+
+## Workflow and Scripts
+Based on the repository's documentation (README.md and Procthor.md), the pipeline for using ProcTHOR floor plans in PhyScene consists of two main stages:
+
+### 1. Preprocessing
+Before generation, the raw ProcTHOR floor plan meshes must be processed into a format PhyScene can understand. 
+- **Script:** `python scripts/preprocess/preprocess_data_prothor.py`
+- **Output:** Extracts center information (`center_info.json`) and generates 2D room layout masks (`room_mask.png`).
+
+### 2. Scene Generation
+Once the floor plans are preprocessed, PhyScene offers two approaches for generating the 3D scene layouts:
+
+* **Plan 1: Full Scene Generation**
+  This approach generates the layouts and physically retrieves/places 3D mesh objects from external datasets (3D-FRONT and 3D-FUTURE).
+  - **Script:** `python scripts/generate/generate_prothor.py`
+
+* **Plan 2: Bounding Box Layouts Only**
+  This approach is lightweight. It generates and saves only the object bounding boxes and the floor plan mesh without downloading massive 3D object datasets. Users can later use these bounding boxes to retrieve their own objects.
+  - **Script:** `sh run/test_procthor_bbox.sh exp_dir`
