@@ -28,12 +28,24 @@ python scripts/eval/evaluate_echoscene_collision.py \
     --transform-source json
 
 python scripts/eval/evaluate_echoscene_collision.py \
-  --object-mesh-root "/content/drive/MyDrive/EchoScene/baseline4/guidancebase/complete_released_full_model/vis/2050/echoscene/object_meshes" \
-  --scene-json "/content/drive/MyDrive/EchoScene/baseline4/guidancebase/complete_released_full_model/vis/2050/physcene_collision_resolved.json" \
-  --transform-source json \
-  --size-scale 1.0 \
-  --method mesh \
-  --backend kaolin \
-  --device cuda \
-  --debug-sanity \
-  --summary-json /content/drive/MyDrive/EchoScene/guidancebase/complete_released_full_model/vis/2050/echoscene_collision_summary.json
+    --object-mesh-root "/content/drive/MyDrive/DiffuScene/merge_d/merged/scene_mesh" \
+    --scene-json "/content/drive/MyDrive/DiffuScene/merge_d/merged/collision_params.json" \
+    --transform-source json \
+    --size-scale 1.0 \
+    --method mesh \
+    --backend kaolin \
+    --device cuda \
+    --debug-sanity \
+    --max-scenes 10000 \
+    --summary-json /content/drive/MyDrive/DiffuScene/merge_d/merged/diffuscene_collision_summary.json
+
+python scripts/eval/evaluate_echoscene_collision.py \                                                                                                    
+    --object-mesh-root "/content/drive/MyDrive/EchoScene/baseline4/guidancebase/complete_released_full_model/vis/2050/echoscene/object_meshes" \         
+    --scene-json "/content/drive/MyDrive/EchoScene/baseline4/guidancebase/complete_released_full_model/vis/2050/physcene_collision_guidance_post_processed.json" \         
+    --transform-source json \                                                                                                                            
+    --size-scale 1.0 \                                                                                                                                   
+    --method mesh \                                                                                                                                      
+    --backend kaolin \                                                                                                                                   
+    --device cuda \                                                                                                                                      
+    --max-scenes 10000 \                                                                                                                                 
+    --summary-json "/content/drive/MyDrive/EchoScene/guidancebase/complete_released_full_model/vis/2050/echoscene_collision_summary.json"  
