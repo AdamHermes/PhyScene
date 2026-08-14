@@ -34,8 +34,4 @@ python scripts/eval/evaluate_echoscene_collision.py \
     --debug-sanity \
     --max-scenes 10000 \
     --summary-json /content/drive/MyDrive/DiffuScene/merge_d/merged/diffuscene_collision_summary.json
-                                                                                                                                  
-    --backend kaolin \                                                                                                                                   
-    --device cuda \                                                                                                                                      
-    --max-scenes 10000 \                                                                                                                                 
-    --summary-json "/content/drive/MyDrive/EchoScene/guidancebase/complete_released_full_model/vis/2050/echoscene_collision_summary.json"  
+                                                                                                                                    
