@@ -21,11 +21,7 @@ einops smplx
 
 pip install kaolin==0.18.0 -f https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-2.4.1_cu121.html
 
-# Chạy để được Colobj and ColScene
-python scripts/eval/evaluate_echoscene_collision.py \
-    --object-mesh-root "/content/drive/MyDrive/EchoScene/286/2050/echoscene/object_meshes" \
-    --scene-json "/content/drive/MyDrive/EchoScene/286/2050/physcene_collision_input.json" \
-    --transform-source json
+
 
 python scripts/eval/evaluate_echoscene_collision.py \
     --object-mesh-root "/content/drive/MyDrive/EchoScene/test3dssg2/vis_3dssg/2050/echoscene/object_meshes" \
