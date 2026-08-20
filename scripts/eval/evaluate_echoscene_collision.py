@@ -330,6 +330,9 @@ def load_scene_meshes(
 ) -> list[tuple[Path, ObjMesh]]:
     meshes = []
     paths = list(scene_dir.glob("*.obj"))
+    # Fallback: Linux (Colab) is case-sensitive, try uppercase extension too
+    if not paths:
+        paths = list(scene_dir.glob("*.OBJ"))
     if transform_source == "json":
         paths = sorted(
             paths,
@@ -343,6 +346,7 @@ def load_scene_meshes(
     else:
         paths = sorted(paths)
 
+    skipped_paths = []
     for path in paths:
         mesh = load_mesh(path)
         if transform_source == "json":
@@ -365,6 +369,7 @@ def load_scene_meshes(
             if objectness is not None and objectness[object_index, 0] <= 0:
                 if debug_index:
                     print("  skipped_objectness =", float(objectness[object_index, 0]))
+                skipped_paths.append((path, float(objectness[object_index, 0])))
                 continue
             mesh = transform_mesh_from_json(
                 mesh,
@@ -376,6 +381,12 @@ def load_scene_meshes(
             )
         meshes.append((path, mesh))
     if not meshes:
+        if skipped_paths:
+            skip_info = ", ".join(f"{p.name} (objectness={v:.4f})" for p, v in skipped_paths)
+            raise ValueError(
+                f"No valid OBJ meshes loaded from {scene_dir}. "
+                f"{len(skipped_paths)} file(s) were skipped due to objectness <= 0: {skip_info}"
+            )
         raise ValueError(f"No OBJ files found in {scene_dir}")
     return meshes
 
