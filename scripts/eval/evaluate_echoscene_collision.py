@@ -650,21 +650,36 @@ def main() -> None:
     per_scene = []
 
     for scene_idx, scene_dir in enumerate(scene_dirs, start=1):
-        flags, meshes = evaluate_scene(
-            scene_dir,
-            args.method,
-            args.device,
-            args.backend,
-            args.point_chunk_size,
-            args.face_chunk_size,
-            args.transform_source,
-            payload_by_id.get(scene_dir.name),
-            args.size_scale,
-            debug_transform,
-            debug_index,
-            debug_pairs,
-            filename_index_base=args.filename_index_base,
-        )
+        try:
+            flags, meshes = evaluate_scene(
+                scene_dir,
+                args.method,
+                args.device,
+                args.backend,
+                args.point_chunk_size,
+                args.face_chunk_size,
+                args.transform_source,
+                payload_by_id.get(scene_dir.name),
+                args.size_scale,
+                debug_transform,
+                debug_index,
+                debug_pairs,
+                filename_index_base=args.filename_index_base,
+            )
+        except ValueError as exc:
+            print(f"[WARNING] Skipping scene {scene_dir.name}: {exc}")
+            per_scene.append(
+                {
+                    "scene_id": scene_dir.name,
+                    "object_count": 0,
+                    "collided_object_count": 0,
+                    "has_collision": False,
+                    "objects": [],
+                    "skipped": True,
+                    "skip_reason": str(exc),
+                }
+            )
+            continue
         scene_collided_objects = int(flags.sum())
         scene_total_objects = len(meshes)
         scene_has_collision = scene_collided_objects > 0
