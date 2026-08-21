@@ -24,8 +24,8 @@ pip install kaolin==0.18.0 -f https://nvidia-kaolin.s3.us-east-2.amazonaws.com/t
 
 
 python scripts/eval/evaluate_echoscene_collision.py \
-    --object-mesh-root "/content/drive/MyDrive/EchoScene/test3dssg2/vis_3dssg/2050/echoscene/object_meshes" \
-    --scene-json "/content/drive/MyDrive/EchoScene/test3dssg2/vis_3dssg/2050/final_with_guidance.json" \
+    --object-mesh-root "/content/PhyScene/dataset27/2050/echoscene/object_meshes" \
+    --scene-json "/content/PhyScene/dataset27/2050/physcene_collision_input.json" \
     --transform-source json \
     --size-scale 1.0 \
     --method mesh \
@@ -34,7 +34,7 @@ python scripts/eval/evaluate_echoscene_collision.py \
     --debug-sanity \
     --max-scenes 10000 \
     --filename-index-base 0 \
-    --summary-json /content/drive/MyDrive/EchoScene/test3dssg2/vis_3dssg/2050/3dssg_collision_summary_all.json
+    --summary-json /content/drive/MyDrive/EchoScene/work27/collision_summary_all.json
 
 python scripts/eval/evaluate_echoscene_collision.py \                                                                                                    
     --object-mesh-root "/content/drive/MyDrive/EchoScene/baseline4/guidancebase/complete_released_full_model/vis/2050/echoscene/object_meshes" \         

@@ -128,16 +128,6 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Run deterministic cube collision checks before evaluating scenes.",
     )
-    parser.add_argument(
-        "--filename-index-base",
-        type=int,
-        choices=(0, 1),
-        default=1,
-        help=(
-            "Whether object filenames are 0-based (object_000.obj → index 0) or "
-            "1-based (object_001.obj → index 0). Default is 1 (EchoScene convention)."
-        ),
-    )
     return parser.parse_args()
 
 
@@ -249,19 +239,12 @@ def load_mesh(path: Path) -> ObjMesh:
     return ObjMesh(vertices, faces)
 
 
-def object_index_from_filename(path: Path, filename_index_base: int = 1) -> int | None:
-    """Extract the 0-based object index from a filename like ``object_001.obj``.
-
-    Args:
-        path: Path to the OBJ file.
-        filename_index_base: 1 if filenames start at 1 (object_001 → index 0),
-            0 if filenames start at 0 (object_000 → index 0).
-    """
+def object_index_from_filename(path: Path) -> int | None:
     stem_parts = path.stem.split("_")
     if not stem_parts:
         return None
     try:
-        return int(stem_parts[-1]) - filename_index_base
+        return int(stem_parts[-1]) - 1
     except ValueError:
         return None
 
@@ -326,19 +309,15 @@ def load_scene_meshes(
     size_scale: float,
     debug_transform: bool,
     debug_index: bool,
-    filename_index_base: int = 1,
 ) -> list[tuple[Path, ObjMesh]]:
     meshes = []
     paths = list(scene_dir.glob("*.obj"))
-    # Fallback: Linux (Colab) is case-sensitive, try uppercase extension too
-    if not paths:
-        paths = list(scene_dir.glob("*.OBJ"))
     if transform_source == "json":
         paths = sorted(
             paths,
             key=lambda p: (
-                object_index_from_filename(p, filename_index_base)
-                if object_index_from_filename(p, filename_index_base) is not None
+                object_index_from_filename(p)
+                if object_index_from_filename(p) is not None
                 else 10**9,
                 p.name,
             ),
@@ -346,13 +325,12 @@ def load_scene_meshes(
     else:
         paths = sorted(paths)
 
-    skipped_paths = []
     for path in paths:
         mesh = load_mesh(path)
         if transform_source == "json":
             if scene_payload is None:
                 raise ValueError("--transform-source json requires --scene-json")
-            object_index = object_index_from_filename(path, filename_index_base)
+            object_index = object_index_from_filename(path)
             if object_index is None:
                 raise ValueError(f"Could not read object index from filename: {path.name}")
             class_labels = scene_payload.get("class_labels")
@@ -369,7 +347,6 @@ def load_scene_meshes(
             if objectness is not None and objectness[object_index, 0] <= 0:
                 if debug_index:
                     print("  skipped_objectness =", float(objectness[object_index, 0]))
-                skipped_paths.append((path, float(objectness[object_index, 0])))
                 continue
             mesh = transform_mesh_from_json(
                 mesh,
@@ -381,12 +358,6 @@ def load_scene_meshes(
             )
         meshes.append((path, mesh))
     if not meshes:
-        if skipped_paths:
-            skip_info = ", ".join(f"{p.name} (objectness={v:.4f})" for p, v in skipped_paths)
-            raise ValueError(
-                f"No valid OBJ meshes loaded from {scene_dir}. "
-                f"{len(skipped_paths)} file(s) were skipped due to objectness <= 0: {skip_info}"
-            )
         raise ValueError(f"No OBJ files found in {scene_dir}")
     return meshes
 
@@ -560,7 +531,6 @@ def evaluate_scene(
     debug_transform: bool,
     debug_index: bool,
     debug_pairs: bool,
-    filename_index_base: int = 1,
 ) -> tuple[np.ndarray, list[tuple[Path, ObjMesh]]]:
     meshes = load_scene_meshes(
         scene_dir,
@@ -569,7 +539,6 @@ def evaluate_scene(
         size_scale,
         debug_transform,
         debug_index,
-        filename_index_base=filename_index_base,
     )
     if method == "bbox_no_direction":
         return bbox_collision_flags(meshes, debug_pairs), meshes
@@ -644,49 +613,48 @@ def main() -> None:
     if not scene_dirs:
         raise ValueError(f"No scenes found under {root}")
 
-    collided_objects = 0
-    total_objects = 0
-    collided_scenes = 0
+    categories = ["all", "bedroom", "livingroom", "diningroom", "library"]
+    collided_objects = {cat: 0 for cat in categories}
+    total_objects = {cat: 0 for cat in categories}
+    collided_scenes = {cat: 0 for cat in categories}
+    total_scenes = {cat: 0 for cat in categories}
     per_scene = []
 
     for scene_idx, scene_dir in enumerate(scene_dirs, start=1):
-        try:
-            flags, meshes = evaluate_scene(
-                scene_dir,
-                args.method,
-                args.device,
-                args.backend,
-                args.point_chunk_size,
-                args.face_chunk_size,
-                args.transform_source,
-                payload_by_id.get(scene_dir.name),
-                args.size_scale,
-                debug_transform,
-                debug_index,
-                debug_pairs,
-                filename_index_base=args.filename_index_base,
-            )
-        except ValueError as exc:
-            print(f"[WARNING] Skipping scene {scene_dir.name}: {exc}")
-            per_scene.append(
-                {
-                    "scene_id": scene_dir.name,
-                    "object_count": 0,
-                    "collided_object_count": 0,
-                    "has_collision": False,
-                    "objects": [],
-                    "skipped": True,
-                    "skip_reason": str(exc),
-                }
-            )
-            continue
+        flags, meshes = evaluate_scene(
+            scene_dir,
+            args.method,
+            args.device,
+            args.backend,
+            args.point_chunk_size,
+            args.face_chunk_size,
+            args.transform_source,
+            payload_by_id.get(scene_dir.name),
+            args.size_scale,
+            debug_transform,
+            debug_index,
+            debug_pairs,
+        )
         scene_collided_objects = int(flags.sum())
         scene_total_objects = len(meshes)
         scene_has_collision = scene_collided_objects > 0
 
-        collided_objects += scene_collided_objects
-        total_objects += scene_total_objects
-        collided_scenes += int(scene_has_collision)
+        scene_name = scene_dir.name.lower()
+        cats_for_scene = ["all"]
+        if "bedroom" in scene_name:
+            cats_for_scene.append("bedroom")
+        if "livingroom" in scene_name or "livingdiningroom" in scene_name:
+            cats_for_scene.append("livingroom")
+        if "diningroom" in scene_name:
+            cats_for_scene.append("diningroom")
+        if "library" in scene_name:
+            cats_for_scene.append("library")
+
+        for cat in cats_for_scene:
+            collided_objects[cat] += scene_collided_objects
+            total_objects[cat] += scene_total_objects
+            collided_scenes[cat] += int(scene_has_collision)
+            total_scenes[cat] += 1
 
         print(f"scene {scene_idx}/{len(scene_dirs)}: {scene_dir.name}")
         print(flags.astype(int).tolist())
@@ -698,6 +666,7 @@ def main() -> None:
         per_scene.append(
             {
                 "scene_id": scene_dir.name,
+                "categories": cats_for_scene,
                 "object_count": scene_total_objects,
                 "collided_object_count": scene_collided_objects,
                 "has_collision": scene_has_collision,
@@ -713,13 +682,24 @@ def main() -> None:
             }
         )
 
-    col_obj = collided_objects / total_objects
-    col_scene = collided_scenes / len(scene_dirs)
-
-    print("overlap object: ", col_obj, "cnt ", collided_objects, "/", total_objects)
-    print("overlap scene rate: ", col_scene)
-    print("ColObj:", col_obj)
-    print("ColScene:", col_scene)
+    col_obj = {}
+    col_scene = {}
+    
+    for cat in categories:
+        if total_objects[cat] > 0:
+            col_obj[cat] = collided_objects[cat] / total_objects[cat]
+        else:
+            col_obj[cat] = 0.0
+            
+        if total_scenes[cat] > 0:
+            col_scene[cat] = collided_scenes[cat] / total_scenes[cat]
+        else:
+            col_scene[cat] = 0.0
+            
+        print(f"[{cat}] overlap object: {col_obj[cat]:.4f} cnt {collided_objects[cat]}/{total_objects[cat]}")
+        print(f"[{cat}] overlap scene rate: {col_scene[cat]:.4f}")
+        print(f"[{cat}] ColObj: {col_obj[cat]:.4f}")
+        print(f"[{cat}] ColScene: {col_scene[cat]:.4f}")
 
     if args.summary_json is not None:
         summary_path = Path(args.summary_json)
@@ -732,7 +712,7 @@ def main() -> None:
                     "transform_source": args.transform_source,
                     "size_scale": args.size_scale,
                     "object_mesh_root": str(root),
-                    "scene_count": len(scene_dirs),
+                    "scene_count": total_scenes,
                     "object_count": total_objects,
                     "collided_object_count": collided_objects,
                     "collided_scene_count": collided_scenes,
