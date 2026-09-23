@@ -654,16 +654,34 @@ def main() -> None:
         scene_total_objects = len(meshes)
         scene_has_collision = scene_collided_objects > 0
 
-        scene_name = scene_dir.name.lower()
+        # Determine target room category based on object_mesh_root path / scene_json path (Approach 2)
+        # Fall back to scene name parsing if root path does not specify room
+        root_path_str = f"{args.object_mesh_root} {args.scene_json}".lower()
+        if "bedroom" in root_path_str:
+            room_cat = "bedroom"
+        elif "diningroom" in root_path_str:
+            room_cat = "diningroom"
+        elif "livingroom" in root_path_str or "livingdiningroom" in root_path_str:
+            room_cat = "livingroom"
+        elif "library" in root_path_str:
+            room_cat = "library"
+        else:
+            # Fallback to scene name
+            scene_name = scene_dir.name.lower()
+            if "bedroom" in scene_name:
+                room_cat = "bedroom"
+            elif "diningroom" in scene_name and "living" not in scene_name:
+                room_cat = "diningroom"
+            elif "livingroom" in scene_name or "livingdiningroom" in scene_name:
+                room_cat = "livingroom"
+            elif "library" in scene_name:
+                room_cat = "library"
+            else:
+                room_cat = None
+
         cats_for_scene = ["all"]
-        if "bedroom" in scene_name:
-            cats_for_scene.append("bedroom")
-        if "livingroom" in scene_name or "livingdiningroom" in scene_name:
-            cats_for_scene.append("livingroom")
-        if "diningroom" in scene_name:
-            cats_for_scene.append("diningroom")
-        if "library" in scene_name:
-            cats_for_scene.append("library")
+        if room_cat is not None:
+            cats_for_scene.append(room_cat)
 
         for cat in cats_for_scene:
             collided_objects[cat] += scene_collided_objects
